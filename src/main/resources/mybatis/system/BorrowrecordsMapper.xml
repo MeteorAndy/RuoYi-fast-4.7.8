@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zl.project.system.borrowrecords.mapper.BorrowrecordsMapper">
+    
+    <resultMap type="Borrowrecords" id="BorrowrecordsResult">
+        <result property="RecordID"    column="RecordID"    />
+        <result property="UserID"    column="UserID"    />
+        <result property="BookID"    column="BookID"    />
+        <result property="BorrowDate"    column="BorrowDate"    />
+        <result property="ExpectedReturnDate"    column="ExpectedReturnDate"    />
+        <result property="ActualReturnDate"    column="ActualReturnDate"    />
+        <result property="Overdue"    column="Overdue"    />
+    </resultMap>
+
+    <sql id="selectBorrowrecordsVo">
+        select RecordID, UserID, BookID, BorrowDate, ExpectedReturnDate, ActualReturnDate, Overdue from borrowrecords
+    </sql>
+
+    <select id="selectBorrowrecordsList" parameterType="Borrowrecords" resultMap="BorrowrecordsResult">
+        <include refid="selectBorrowrecordsVo"/>
+        <where>  
+            <if test="UserID != null "> and UserID = #{UserID}</if>
+            <if test="BookID != null "> and BookID = #{BookID}</if>
+            <if test="BorrowDate != null "> and BorrowDate = #{BorrowDate}</if>
+            <if test="ExpectedReturnDate != null "> and ExpectedReturnDate = #{ExpectedReturnDate}</if>
+            <if test="ActualReturnDate != null "> and ActualReturnDate = #{ActualReturnDate}</if>
+            <if test="Overdue != null "> and Overdue = #{Overdue}</if>
+        </where>
+    </select>
+    
+    <select id="selectBorrowrecordsByRecordID" parameterType="Long" resultMap="BorrowrecordsResult">
+        <include refid="selectBorrowrecordsVo"/>
+        where RecordID = #{RecordID}
+    </select>
+        
+    <insert id="insertBorrowrecords" parameterType="Borrowrecords">
+        insert into borrowrecords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="RecordID != null">RecordID,</if>
+            <if test="UserID != null">UserID,</if>
+            <if test="BookID != null">BookID,</if>
+            <if test="BorrowDate != null">BorrowDate,</if>
+            <if test="ExpectedReturnDate != null">ExpectedReturnDate,</if>
+            <if test="ActualReturnDate != null">ActualReturnDate,</if>
+            <if test="Overdue != null">Overdue,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="RecordID != null">#{RecordID},</if>
+            <if test="UserID != null">#{UserID},</if>
+            <if test="BookID != null">#{BookID},</if>
+            <if test="BorrowDate != null">#{BorrowDate},</if>
+            <if test="ExpectedReturnDate != null">#{ExpectedReturnDate},</if>
+            <if test="ActualReturnDate != null">#{ActualReturnDate},</if>
+            <if test="Overdue != null">#{Overdue},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBorrowrecords" parameterType="Borrowrecords">
+        update borrowrecords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="UserID != null">UserID = #{UserID},</if>
+            <if test="BookID != null">BookID = #{BookID},</if>
+            <if test="BorrowDate != null">BorrowDate = #{BorrowDate},</if>
+            <if test="ExpectedReturnDate != null">ExpectedReturnDate = #{ExpectedReturnDate},</if>
+            <if test="ActualReturnDate != null">ActualReturnDate = #{ActualReturnDate},</if>
+            <if test="Overdue != null">Overdue = #{Overdue},</if>
+        </trim>
+        where RecordID = #{RecordID}
+    </update>
+
+    <delete id="deleteBorrowrecordsByRecordID" parameterType="Long">
+        delete from borrowrecords where RecordID = #{RecordID}
+    </delete>
+
+    <delete id="deleteBorrowrecordsByRecordIDs" parameterType="String">
+        delete from borrowrecords where RecordID in 
+        <foreach item="RecordID" collection="array" open="(" separator="," close=")">
+            #{RecordID}
+        </foreach>
+    </delete>
+
+</mapper>

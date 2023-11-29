@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zl.project.system.inventory.mapper.InventoryMapper">
+    
+    <resultMap type="Inventory" id="InventoryResult">
+        <result property="BookID"    column="BookID"    />
+        <result property="InStock"    column="InStock"    />
+        <result property="Borrowed"    column="Borrowed"    />
+        <result property="ExpectedReturnDate"    column="ExpectedReturnDate"    />
+    </resultMap>
+
+    <sql id="selectInventoryVo">
+        select BookID, InStock, Borrowed, ExpectedReturnDate from inventory
+    </sql>
+
+    <select id="selectInventoryList" parameterType="Inventory" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        <where>  
+            <if test="BookID != null "> and BookID = #{BookID}</if>
+            <if test="InStock != null "> and InStock = #{InStock}</if>
+            <if test="Borrowed != null "> and Borrowed = #{Borrowed}</if>
+            <if test="ExpectedReturnDate != null "> and ExpectedReturnDate = #{ExpectedReturnDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectInventoryByBookID" parameterType="Long" resultMap="InventoryResult">
+        <include refid="selectInventoryVo"/>
+        where BookID = #{BookID}
+    </select>
+        
+    <insert id="insertInventory" parameterType="Inventory">
+        insert into inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="BookID != null">BookID,</if>
+            <if test="InStock != null">InStock,</if>
+            <if test="Borrowed != null">Borrowed,</if>
+            <if test="ExpectedReturnDate != null">ExpectedReturnDate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="BookID != null">#{BookID},</if>
+            <if test="InStock != null">#{InStock},</if>
+            <if test="Borrowed != null">#{Borrowed},</if>
+            <if test="ExpectedReturnDate != null">#{ExpectedReturnDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInventory" parameterType="Inventory">
+        update inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="InStock != null">InStock = #{InStock},</if>
+            <if test="Borrowed != null">Borrowed = #{Borrowed},</if>
+            <if test="ExpectedReturnDate != null">ExpectedReturnDate = #{ExpectedReturnDate},</if>
+        </trim>
+        where BookID = #{BookID}
+    </update>
+
+    <delete id="deleteInventoryByBookID" parameterType="Long">
+        delete from inventory where BookID = #{BookID}
+    </delete>
+
+    <delete id="deleteInventoryByBookIDs" parameterType="String">
+        delete from inventory where BookID in 
+        <foreach item="BookID" collection="array" open="(" separator="," close=")">
+            #{BookID}
+        </foreach>
+    </delete>
+
+</mapper>

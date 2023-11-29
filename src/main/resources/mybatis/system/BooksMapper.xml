@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zl.project.system.books.mapper.BooksMapper">
+    
+    <resultMap type="Books" id="BooksResult">
+        <result property="BookID"    column="BookID"    />
+        <result property="Title"    column="Title"    />
+        <result property="Author"    column="Author"    />
+        <result property="Publisher"    column="Publisher"    />
+        <result property="PublishDate"    column="PublishDate"    />
+        <result property="ISBN"    column="ISBN"    />
+        <result property="Category"    column="Category"    />
+    </resultMap>
+
+    <sql id="selectBooksVo">
+        select BookID, Title, Author, Publisher, PublishDate, ISBN, Category from books
+    </sql>
+
+    <select id="selectBooksList" parameterType="Books" resultMap="BooksResult">
+        <include refid="selectBooksVo"/>
+        <where>  
+            <if test="Title != null  and Title != ''"> and Title = #{Title}</if>
+            <if test="Author != null  and Author != ''"> and Author = #{Author}</if>
+            <if test="Publisher != null  and Publisher != ''"> and Publisher = #{Publisher}</if>
+            <if test="PublishDate != null "> and PublishDate = #{PublishDate}</if>
+            <if test="ISBN != null  and ISBN != ''"> and ISBN = #{ISBN}</if>
+            <if test="Category != null  and Category != ''"> and Category = #{Category}</if>
+        </where>
+    </select>
+    
+    <select id="selectBooksByBookID" parameterType="Long" resultMap="BooksResult">
+        <include refid="selectBooksVo"/>
+        where BookID = #{BookID}
+    </select>
+        
+    <insert id="insertBooks" parameterType="Books">
+        insert into books
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="BookID != null">BookID,</if>
+            <if test="Title != null">Title,</if>
+            <if test="Author != null">Author,</if>
+            <if test="Publisher != null">Publisher,</if>
+            <if test="PublishDate != null">PublishDate,</if>
+            <if test="ISBN != null">ISBN,</if>
+            <if test="Category != null">Category,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="BookID != null">#{BookID},</if>
+            <if test="Title != null">#{Title},</if>
+            <if test="Author != null">#{Author},</if>
+            <if test="Publisher != null">#{Publisher},</if>
+            <if test="PublishDate != null">#{PublishDate},</if>
+            <if test="ISBN != null">#{ISBN},</if>
+            <if test="Category != null">#{Category},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBooks" parameterType="Books">
+        update books
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="Title != null">Title = #{Title},</if>
+            <if test="Author != null">Author = #{Author},</if>
+            <if test="Publisher != null">Publisher = #{Publisher},</if>
+            <if test="PublishDate != null">PublishDate = #{PublishDate},</if>
+            <if test="ISBN != null">ISBN = #{ISBN},</if>
+            <if test="Category != null">Category = #{Category},</if>
+        </trim>
+        where BookID = #{BookID}
+    </update>
+
+    <delete id="deleteBooksByBookID" parameterType="Long">
+        delete from books where BookID = #{BookID}
+    </delete>
+
+    <delete id="deleteBooksByBookIDs" parameterType="String">
+        delete from books where BookID in 
+        <foreach item="BookID" collection="array" open="(" separator="," close=")">
+            #{BookID}
+        </foreach>
+    </delete>
+
+</mapper>
